@@ -115,7 +115,7 @@ public class Frame implements Runnable{
 	}
 
 	private void printGrayscaleImageToFile(short[][] grayscale, String filename){
-		BufferedImage image = new BufferedImage(resolution, resolution, BufferedImage.TYPE_USHORT_GRAY);
+		BufferedImage image = new BufferedImage(resolution, resolution, BufferedImage.TYPE_INT_RGB);
 		for (int y = 0; y < resolution; y++) {
 		    for (int x = 0; x < resolution; x++) {
 		        image.setRGB(x, y, grayscaleToRGBInt(grayscale[y][x]));
@@ -134,25 +134,6 @@ public class Frame implements Runnable{
 		i = (i << 8) + s;
 		i = (i << 8) + s;
 		return i;
-	}
-	
-	public static void main(String[] args){
-		
-		double a = .77;
-		double b = .73;
-		double c = .41;
-		double d = .63;
-		double e = 1.56;
-		double f = .47;
-		
-		int frameNo = 0;
-		
-		
-		for (double delta = 0; delta < 1; delta+=.01) {
-			Frame frame = new Frame(a + delta, b, c, d, e - delta, f).withRepetitions(1000000).withFilename("frame"+(frameNo++)+".png").withResolution(1000);
-			Thread t = new Thread(frame);
-			t.start();
-		}
 	}
 	
 }

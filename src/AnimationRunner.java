@@ -41,9 +41,8 @@ public class AnimationRunner {
 			t.join();
 		}
 		
-		BufferedImage frame0 = ImageIO.read(new File(frameName(0)));
 		ImageOutputStream output = new FileImageOutputStream(new File(this.filename + ".gif"));
-		GifSequenceWriter writer = new GifSequenceWriter(output, frame0.getType(), 1, true);
+		GifSequenceWriter writer = new GifSequenceWriter(output, BufferedImage.TYPE_INT_RGB, 1, true);
 		
 		for (frameNo = 0; frameNo < frames.size(); frameNo++) {
 			writer.writeToSequence(ImageIO.read(new File(frameName(frameNo))));
@@ -51,6 +50,11 @@ public class AnimationRunner {
 		
 		writer.close();
 	    output.close();
+	    
+	    for (int i = 0; i < frames.size(); i++){
+	    	new File(frameName(i)).delete();
+	    }
+	    new File(filename+"-frames").delete();
 	}
 	
 }

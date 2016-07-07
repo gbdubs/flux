@@ -10,7 +10,7 @@ public class ParameterSequence {
 	
 	public static List<double[]> generate(int numFrames){
 		double[] pos = generateRandom();
-		double[] velo = generateRandomVelo();
+		double[] velo = generateInitialVelo(pos);
 		double[] accel = generateAccel(pos);
 		List<double[]> result = new ArrayList<double[]>();
 		result.add(pos);
@@ -27,12 +27,14 @@ public class ParameterSequence {
 	private static void ensureBounds(double[] pos, double[] velo){
 		for (int i = 0; i < 6; i++){
 			if (pos[i] >= Math.PI){
+				System.err.println("CRASH!");
 				pos[i] = Math.PI - .01;
 				if (velo[i] > 0){
 					velo[i] = -1 * velo[i];
 				}
 			}
 			if (pos[i] <= 0) {
+				System.err.println("CRASH!");
 				pos[i] = 0.01;
 				if (velo[i] < 0){
 					velo[i] = -1 * velo[i];
@@ -41,11 +43,14 @@ public class ParameterSequence {
 		}
 	}
 	
-	private static double[] generateRandomVelo(){
-		double[] result = generateRandom();
-		for (int i = 0; i < 6; i++){
-			result[i] *= (Math.random() * 2 - 1);
+	private static double[] generateInitialVelo(double[] pos){
+		double[] result = new double[6];
+		double dotTotal = 0;
+		for (int i = 0; i < 5; i++){
+			result[i] = .5 * (Math.random() - .5);
+			dotTotal += (pos[i] - 1) * result[i];
 		}
+		result[5] = -1 * dotTotal / (pos[5] - 1);
 		return result;
 	}
 	
@@ -68,7 +73,7 @@ public class ParameterSequence {
 	private static double[] actualizeAcceleration(double[] velo, double[] accel){
 		double[] newVelo = new double[6];
 		for(int i = 0; i < 6; i++){
-			newVelo[i] = newVelo[i] + accel[i] * ACTUALIZATION_CONSTANT;
+			newVelo[i] = velo[i] + accel[i] * ACTUALIZATION_CONSTANT;
 		}
 		return newVelo;
 	}
@@ -79,20 +84,26 @@ public class ParameterSequence {
 	
 	private static double[] generateAccel(double[] pos){
 		double[] result = new double[6];
-		double[] random = generateRandomVelo();
+		double[] random = new double[6];
+		double dist = dist(pos);
 		for (int i = 0; i < 6; i++){
-			random[i] = (random[i] - (Math.PI / 2)) / Math.PI;
-		}
-		for (int i = 0; i < 6; i++){
-			result[i] = generateForce(pos[i]) + random[i];
+			result[i] = generateForce(pos[i])/(dist*dist) + random[i];
 		}
 		return result;
 	}
 
+	public static double dist(double[] a){
+		double result = 0;
+		for (double d : a){
+			result += d*d;
+		}
+		return Math.sqrt(result);
+	}
+	
 	public static void main(String[] args){
 		List<double[]> result = generate(100);
 		for (double[] d : result){
-			System.out.println(Arrays.toString(d));
+			System.out.println(Arrays.toString(d) + " = " + dist(d));
 		}
 		
 	}
