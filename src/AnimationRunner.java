@@ -19,6 +19,8 @@ public class AnimationRunner {
 	private String filename;
 	
 	public AnimationRunner(List<Frame> frames, String outputName){
+		this.filename = outputName;
+		new File(filename+"-frames").mkdir();
 		this.frames = frames;
 	}
 	
@@ -40,7 +42,7 @@ public class AnimationRunner {
 		}
 		
 		BufferedImage frame0 = ImageIO.read(new File(frameName(0)));
-		ImageOutputStream output = new FileImageOutputStream(new File(this.filename));
+		ImageOutputStream output = new FileImageOutputStream(new File(this.filename + ".gif"));
 		GifSequenceWriter writer = new GifSequenceWriter(output, frame0.getType(), 1, true);
 		
 		for (frameNo = 0; frameNo < frames.size(); frameNo++) {

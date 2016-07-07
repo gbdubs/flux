@@ -20,6 +20,10 @@ public class Frame implements Runnable{
 	
 	private int[][] counts;
 	
+	public static Frame create(double[] vars){
+		return new Frame(vars[0],vars[1],vars[2],vars[3],vars[4],vars[5] );
+	}
+	
 	public Frame(double a, double b, double c, double d, double e, double f){
 		this.resolution = 1000;
 		this.repetitions = 1000000;
