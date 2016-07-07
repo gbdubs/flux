@@ -5,8 +5,10 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 
-public class Frame {
+public class Frame implements Runnable{
 
+	private String filename;
+	private int repetitions;
 	private int resolution;
 	
 	private double a;
@@ -18,32 +20,38 @@ public class Frame {
 	
 	private int[][] counts;
 	
-	public Frame(){
+	public Frame(double a, double b, double c, double d, double e, double f){
 		this.resolution = 1000;
+		this.repetitions = 1000000;
+		this.filename = "default.png";
 		
-		a = .77;
-		b = .73;
-		c = .41;
-		d = .63;
-		e = 1.56;
-		f = .47;
+		this.a = a; this.b = b; this.c = c; this.d = d; this.e = e; this.f = f;
 		
 		this.counts = new int[resolution][resolution];
 	}
 	
-	private double xTransform(double x, double y, double z){
-		return Math.cos(a * x) + Math.sin(b * y) - Math.cos(c * z);
+	public Frame withFilename(String filename){
+		this.filename = filename;
+		return this;
 	}
 	
-	private double yTransform(double x, double y, double z){
-		return Math.sin(d * x) + Math.cos(e * y) - Math.cos(f * z);
+	public Frame withResolution(int resolution){
+		this.resolution = resolution;
+		return this;
 	}
 	
-	private double zTransform(double x, double y, double z){
-		return z + .01;
+	public Frame withRepetitions(int repetitions){
+		this.repetitions = repetitions;
+		return this;
 	}
 	
-	public void run(int repetitions){
+	@Override
+	public void run() {
+		this.execute(this.repetitions);
+		this.print(filename);
+	}
+
+	private void execute(int repetitions){
 		double x = 0, y = 0, z = 0;
 		double newX, newY, newZ;
 		for (int rep = 0; rep < repetitions; rep++){
@@ -56,17 +64,29 @@ public class Frame {
 			z = newZ;
 		}
 	}
-	
-	public void print(String filename){
-		short[][] gray = countsToGrayscale(counts);
-		printGrayscaleImageToFile(gray, filename);
-	}
-	
+
 	private void increment(double x, double y, double z){
 		int ix = (int) Math.floor((x + 3) / 6 * (resolution - 1));
 		int iix = (int) Math.floor((y + 3) / 6 * (resolution - 1));
 		//int iiix = (int) Math.floor((z + 3) / 6 * (resolution - 1));
 		this.counts[ix][iix]++;
+	}
+
+	private double xTransform(double x, double y, double z){
+		return Math.cos(b * x) + Math.sin(a * y) - Math.cos(c * z);
+	}
+	
+	private double yTransform(double x, double y, double z){
+		return Math.sin(d * x) + Math.cos(e * y) - Math.cos(f * z);
+	}
+	
+	private double zTransform(double x, double y, double z){
+		return z + .01;
+	}
+	
+	private void print(String filename){
+		short[][] gray = countsToGrayscale(counts);
+		printGrayscaleImageToFile(gray, filename);
 	}
 	
 	private static short[][] countsToGrayscale(int[][] counts){
@@ -89,14 +109,7 @@ public class Frame {
 		}
 		return result;
 	}
-	
-	private static int grayscaleToRGBInt(short s){
-		int i = (int) s;
-		i = (i << 8) + s;
-		i = (i << 8) + s;
-		return i;
-	}
-	
+
 	private void printGrayscaleImageToFile(short[][] grayscale, String filename){
 		BufferedImage image = new BufferedImage(resolution, resolution, BufferedImage.TYPE_USHORT_GRAY);
 		for (int y = 0; y < resolution; y++) {
@@ -111,13 +124,31 @@ public class Frame {
 			e.printStackTrace();
 		}
 	}
+
+	private static int grayscaleToRGBInt(short s){
+		int i = (int) s;
+		i = (i << 8) + s;
+		i = (i << 8) + s;
+		return i;
+	}
 	
 	public static void main(String[] args){
-		Frame f = new Frame();
-		long l = System.currentTimeMillis();
-		f.run(3000000);
-		System.out.println(System.currentTimeMillis() - l);
-		f.print("helloworld.png");
+		
+		double a = .77;
+		double b = .73;
+		double c = .41;
+		double d = .63;
+		double e = 1.56;
+		double f = .47;
+		
+		int frameNo = 0;
+		
+		
+		for (double delta = 0; delta < 1; delta+=.01) {
+			Frame frame = new Frame(a + delta, b, c, d, e - delta, f).withRepetitions(1000000).withFilename("frame"+(frameNo++)+".png").withResolution(1000);
+			Thread t = new Thread(frame);
+			t.start();
+		}
 	}
 	
 }
