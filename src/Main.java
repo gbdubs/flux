@@ -7,13 +7,13 @@ import java.util.List;
 public class Main {
 
 	public static void main(String[] args){
-		for (int i = 0; i < 1; i++){
-			makeRandomGif("results/longrun"+i, 100);
+		for (int i = 0; i < 10; i++){
+			makeRandomGif("results/"+RandomCatName.generate()+i);
 		}
 	}
 			
-	public static void makeRandomGif(String filename, int reps){
-		List<double[]> parameterSequence = ParameterSequence.generate(reps);
+	public static void makeRandomGif(String filename){
+		List<double[]> parameterSequence = ParameterSequence.generateParameterSequence();
 		List<Frame> frames = new ArrayList<Frame>();
 		for (double[] params : parameterSequence){
 			Frame f = Frame.create(params).withRepetitions(1000000).withResolution(500);

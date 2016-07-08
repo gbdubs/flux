@@ -1,13 +1,5 @@
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
-
 public class Frame implements Runnable{
 
-	private String filename;
 	private int repetitions;
 	private int resolution;
 	
@@ -21,23 +13,18 @@ public class Frame implements Runnable{
 	private int[][] counts;
 	
 	public static Frame create(double[] vars){
-		return new Frame(vars[0],vars[1],vars[2],vars[3],vars[4],vars[5] );
+		return new Frame(vars[0],vars[1],vars[2],vars[3],vars[4],vars[5]);
 	}
 	
 	public Frame(double a, double b, double c, double d, double e, double f){
 		this.resolution = 1000;
 		this.repetitions = 1000000;
-		this.filename = "default.png";
 		
 		this.a = a; this.b = b; this.c = c; this.d = d; this.e = e; this.f = f;
 		
 		this.counts = new int[resolution][resolution];
 	}
 	
-	public Frame withFilename(String filename){
-		this.filename = filename;
-		return this;
-	}
 	
 	public Frame withResolution(int resolution){
 		this.resolution = resolution;
@@ -52,7 +39,6 @@ public class Frame implements Runnable{
 	@Override
 	public void run() {
 		this.execute(this.repetitions);
-		this.print(filename);
 	}
 
 	private void execute(int repetitions){
@@ -88,52 +74,22 @@ public class Frame implements Runnable{
 		return z + .01;
 	}
 	
-	private void print(String filename){
-		short[][] gray = countsToGrayscale(counts);
-		printGrayscaleImageToFile(gray, filename);
+	public int[][] getCounts(){
+		return this.counts;
 	}
-	
-	private static short[][] countsToGrayscale(int[][] counts){
+
+	public int getResolution() {
+		return this.resolution;
+	}
+
+	public int getMaxCount() {
 		int max = 0;
-		int min = Integer.MAX_VALUE;
-		short[][] result = new short[counts.length][counts[0].length];
 		for (int i = 0; i < counts.length; i++){
 			for (int j = 0; j < counts[0].length; j++){
 				max = Math.max(max, counts[i][j]);
-				min = Math.min(min, counts[i][j]);
 			}
 		}
-		for (int i = 0; i < counts.length; i++){
-			for (int j = 0; j < counts[0].length; j++){
-				double d = 255 - 255.0 * Math.sqrt((counts[i][j] * 1.0) / max);
-				//double d = counts[i][j] > 0 ? 0.0 : 255.0;
-				short s = (short) Math.floor(d);
-				result[i][j] = s;
-			}
-		}
-		return result;
-	}
-
-	private void printGrayscaleImageToFile(short[][] grayscale, String filename){
-		BufferedImage image = new BufferedImage(resolution, resolution, BufferedImage.TYPE_INT_RGB);
-		for (int y = 0; y < resolution; y++) {
-		    for (int x = 0; x < resolution; x++) {
-		        image.setRGB(x, y, grayscaleToRGBInt(grayscale[y][x]));
-			}
-		}
-		File outputfile = new File(filename);
-		try {
-			ImageIO.write(image, "png", outputfile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static int grayscaleToRGBInt(short s){
-		int i = (int) s;
-		i = (i << 8) + s;
-		i = (i << 8) + s;
-		return i;
+		return max;
 	}
 	
 }

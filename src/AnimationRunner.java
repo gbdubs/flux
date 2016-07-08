@@ -30,10 +30,33 @@ public class AnimationRunner {
 	
 	public void run() throws InterruptedException, FileNotFoundException, IOException{
 		Set<Thread> threads = new HashSet<Thread>();
-		int frameNo = 0;
+		
+		
+		// All the computation of the frames is done in this portion.
 		for (Frame f : frames){
-			f.withFilename(frameName(frameNo++));
 			Thread t = new Thread(f);
+			threads.add(t);
+			t.start();
+		}
+		for (Thread t : threads){
+			t.join();
+		}
+		
+		threads.clear();
+		
+		
+		int maxCount = 0;
+		for (Frame f : frames){
+			int count = f.getMaxCount();
+			maxCount = Math.max(maxCount, count);
+		}
+		
+		int frameNo = 0;
+		
+		for (Frame f : frames){
+			FramePrinter fp = new FramePrinter(f).withFilename(frameName(frameNo++));
+			fp.adjustToMaxCount(maxCount);
+			Thread t = new Thread(fp);
 			threads.add(t);
 			t.start();
 		}
