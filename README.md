@@ -1,13 +1,17 @@
 # Flux
 Last updated on July 14, 2016
 
+![Pretty Picture](https://github.com/gbdubs/flux/blob/master/stunning/best/EXP9.gif)
 
 ### Fluctuating Repetitions
 This project is based on one that comes from [this blog](http://koaning.io/fluctuating-repetition.html) post by Vincent D. Warmerdam.
 In it, Warmerdam provides a really interesting set of equations which iterateively describe the progression of a point through space.
 If we iterate through enough values of Z, we are drawing an intensity image of the relative distribution of the range of the function.
-*Note that there is a slight error in Warmerdam's code, he has miswritten two cosine functions as sine functions.  Fixing this (as I do)
-breaks the symmetry that he describes, but beyond that, does not meaningfully impact the project.*
+
+![Equations](http://i.imgur.com/miFHqEt.png)
+
+Note that there is a slight error in Warmerdam's code, he has miswritten two cosine functions as sine functions.  Fixing this (as I do)
+breaks the symmetry that he describes, but beyond that, does not meaningfully impact the project.
 
 ## Parameters
 The model takes in 6 parameters, a, b, c, d, e, and f.
@@ -30,11 +34,17 @@ the result is generally uninteresting; a warped quadrilateral, appearing like a 
 Coorespondingly, when the sum of the parameters was too high (in the neighborhood of 8-15), the result quickly became completely diffuse,
 Relatively unremarkable.
 I sought out a technique that would avoid both of these spaces.
+An example below (at the end) shows the boring small parameter space.
+
+![Meh Example](https://raw.githubusercontent.com/gbdubs/flux/master/stunning/longestrun11.gif)
 
 ### Orbits - Physics again
 A simple solution to this cannundrum was modifying the physical situation to describe one of a unit orbit: a circular (in 6 dimensions)
 path which maintained a distance of 1 from the origin of 0. I then shifted this result to fit into the range [.5, 1.7], which avoided both
 of the bad parameter spaces described, and of course created even more continuous animated results.
+An example below shows a result of working with the good parameter space.
+
+![Okay Example](https://github.com/gbdubs/flux/blob/master/stunning/best/transmogrification6.gif)
 
 ## Looping and Colors
 One nice feature of an orbit is that it ends where it starts. 
@@ -42,5 +52,7 @@ For GIF files, this is a nice property, as it allows them to loop continuously i
 Moreover, starting multiple parameter sets in the same location, and giving their velocity different directions yields paths which 
 mutually intersect at both the origin and at a point opposite the origin on the sphere of orbit. 
 Using different colors to map these different parameter orbits (and some math to combine them back into a single GIF) yields some stunning results.
+
+![Gorgeous Example](https://github.com/gbdubs/flux/blob/master/stunning/best/EXP9.gif)
 
 Please feel free to email me with any ideas or questions!
