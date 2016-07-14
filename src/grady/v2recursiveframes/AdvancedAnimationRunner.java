@@ -26,14 +26,15 @@ public class AdvancedAnimationRunner {
 
 	private static final long MAX_BYTES_ALLOCATED = 1000 * 1000 * 1000; // 1 GB
 	
-	
 	private List<double[]> parameters;
 	private String filename;
 	private int resolution;
 	private int repetitions;
+	private boolean shouldDelete;
 	
 	public AdvancedAnimationRunner(List<double[]> params){
 		this.parameters = params;
+		this.shouldDelete = true;
 	}
 	
 	public AdvancedAnimationRunner withFilename(String s){
@@ -48,6 +49,11 @@ public class AdvancedAnimationRunner {
 	
 	public AdvancedAnimationRunner withRepetitions(int s){
 		this.repetitions = s;
+		return this;
+	}
+	
+	public AdvancedAnimationRunner withShouldDelete(boolean b){
+		this.shouldDelete = b;
 		return this;
 	}
 	
@@ -67,8 +73,14 @@ public class AdvancedAnimationRunner {
 		System.out.println("PRINTED GIF");
 	}
 	
+	public int threadMemorySize(){
+		int fromThread = 512 * 1000 * 8;
+		int fromArray = ((this.resolution + 8) * this.resolution) * 8;
+		return (fromThread + fromArray) * 2;
+	}
+	
 	public void createFrames() throws InterruptedException, FileNotFoundException, IOException{
-		int maxThreads = (int) (MAX_BYTES_ALLOCATED / ((new Frame(0,0,0,0,0,0)).getNumBytes() * 2));
+		int maxThreads = (int) (MAX_BYTES_ALLOCATED / (threadMemorySize()));
 		System.out.println("MAX BATCH SIZE: " + maxThreads);
 		
 		Set<Thread> runPool = new HashSet<Thread>();
@@ -139,7 +151,7 @@ public class AdvancedAnimationRunner {
 			framePrinterPool.clear();
 		}
 	}
-		
+	
 	public void printGifFromFrames() throws FileNotFoundException, IOException{
 		File frameFolder = new File(frameFolderName());
 	
@@ -172,10 +184,12 @@ public class AdvancedAnimationRunner {
 		writer.close();
 	    output.close();
 	    
-	    for (File f : frames){
-	    	f.delete();
+	    if (shouldDelete){
+		    for (File f : frames){
+		    	f.delete();
+		    }
+		    
+		    frameFolder.delete();
 	    }
-	    
-	    frameFolder.delete();
 	}
 }

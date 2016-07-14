@@ -18,7 +18,7 @@ public class ParameterSequence {
 		List<double[]> result = generateUnitCircle();
 		for (double[] ds : result){
 			for (int i = 0; i < dimensions; i++){
-				ds[i] = ds[i] + 1;
+				ds[i] = ds[i] + 1.5;
 			}
 		}
 		return result;
