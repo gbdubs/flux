@@ -1,0 +1,122 @@
+<html>
+	<head>
+		<link href='https://fonts.googleapis.com/css?family=Arvo:400,700' rel='stylesheet' type='text/css'>
+		<style>
+			body{
+				margin: 0;
+				font-family: "Arvo", serif;
+			}
+			.hidden{
+				display: none;
+			}
+
+			.flux-wrapper {
+				padding: Calc(50vh - 300px) Calc(50vw - 300px);
+			}
+
+			.flux-wrapper > * {
+				width: 600px;
+				height: 600px;
+				max-width: 100vw;
+				max-height: 100vw;
+			}
+
+			#loading {
+				position: relative;
+			}
+
+			#loading > div{
+				width: 100px;
+				height: 100px;
+				background: black;
+				position: absolute;
+				top: Calc(50% - 50px);
+				left: Calc(50% - 50px);
+				animation: spin 3s linear infinite;
+			}
+
+			#loading > span {
+				color: white;
+				width: 100px;
+				height: 100px;
+				background: transparent;
+				position: absolute;
+				z-index: 1;
+				top: Calc(50% - 50px);
+				left: Calc(50% - 50px);
+				font-size: 1rem;
+				padding: Calc(50px - .75rem) 0;
+				text-align: center;
+				display: block;
+				position: absolute;
+			}
+
+			.info{
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				padding: 1rem;
+			}
+
+			@-moz-keyframes spin {
+				from { -moz-transform: rotate(0deg); }
+				to { -moz-transform: rotate(360deg); }
+			}
+			@-webkit-keyframes spin {
+				from { -webkit-transform: rotate(0deg); }
+				to { -webkit-transform: rotate(360deg); }
+			}
+			@keyframes spin {
+				from {transform:rotate(0deg);}
+				to {transform:rotate(360deg);}
+			}
+		</style>
+	</head>
+		
+	<body>
+		<div class="flux-wrapper">
+			<img id="flux" class="hidden" rel:auto_play="0"/>
+			<img src="pics/EXP0.gif" class="hidden"/>
+			<img src="pics/EXP1.gif" class="hidden"/>
+			<img src="pics/EXP2.gif" class="hidden"/>
+			<img src="pics/EXP3.gif" class="hidden"/>
+			<img src="pics/EXP4.gif" class="hidden"/>
+			<img src="pics/EXP5.gif" class="hidden"/>
+			<img src="pics/EXP6.gif" class="hidden"/>
+			<img src="pics/EXP7.gif" class="hidden"/>
+			<img src="pics/EXP8.gif" class="hidden"/>
+			<img src="pics/EXP9.gif" class="hidden"/>
+			<div id="loading">
+				<div> </div>
+				<span>Loading...</span>
+			</div>
+		</div>
+		<div class="info">
+			Flux, a project by Grady Ward. <a href="http://www.github.com/gbdubs/flux">Github</a>.
+		</div>
+		<script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+		<script type="text/javascript">
+
+	    	$(window).load(function(){
+				$("#loading").addClass("hidden");
+	    		var allImageScreens = $("img");
+	    		var flux = $("#flux");
+	    		var NMILLIS = 233 * 100;
+	    		var NIMAGES = allImageScreens.length - 1;
+
+	    		function transitionTo(i){
+	    			console.log("Transitioning to "+i)
+	 				var im = allImageScreens[i+1];
+					$(flux).attr("src", $(im).attr("src")).removeClass("hidden");
+	    			setTimeout(function(){
+	    				transitionTo(Math.floor(Math.random() * NIMAGES));
+	    			}, NMILLIS);
+	    		}
+
+	    		transitionTo(0);
+	    	});
+
+    	</script>
+	</body>
+
+</html>
